@@ -1,12 +1,5 @@
 <script>
-const SECTION_CONFIG = [
-  { key: "resumo", num: "01", title: "Resumo do Negócio", colorClass: "" },
-  { key: "gargalos", num: "02", title: "Principais Gargalos", colorClass: "" },
-  { key: "perdas", num: "03", title: "Perdas de Dinheiro", colorClass: "danger" },
-  { key: "quickwins", num: "04", title: "Oportunidades Rápidas", colorClass: "gold" },
-  { key: "alavancas", num: "05", title: "Alavancas de Crescimento", colorClass: "accent" },
-  { key: "insights", num: "06", title: "Insights para Abordagem", colorClass: "" },
-];
+// Removido SECTION_CONFIG pois não estava sendo usado
 
 async function generateDiagnostic() {
   const google = document.getElementById('google').value.trim();
@@ -37,9 +30,8 @@ async function generateDiagnostic() {
     document.getElementById(steps[i]).classList.add('visible');
   }
 
-  // === CRIA O PROMPT (versão melhorada e limpa) ===
+  // === CRIA O PROMPT (versão limpa e mantida) ===
   const prompt = `Atue como especialista em crescimento de imobiliárias (aquisição, vendas e posicionamento digital).
-
 Analise as seguintes fontes da imobiliária e gere um diagnóstico comercial direto e acionável:
 
 Google Meu Negócio: ${google || 'Não informado'}
@@ -53,7 +45,6 @@ REGRAS IMPORTANTES:
 - Use linguagem de consultor experiente
 
 Responda **APENAS** com um JSON válido, sem nenhum texto antes ou depois:
-
 {
   "fraseImpacto": "Uma frase poderosa de no máximo 1 linha resumindo o principal problema/oportunidade",
   "resumo": "Resumo do posicionamento percebido, público-alvo e tipo de imóvel (máx 4 linhas)",
@@ -67,14 +58,13 @@ Responda **APENAS** com um JSON válido, sem nenhum texto antes ou depois:
   // Mostra o resultado
   document.getElementById('loading').style.display = 'none';
   document.getElementById('result').style.display = 'block';
-
-  document.getElementById('timestamp').textContent = 
+  document.getElementById('timestamp').textContent =
     new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 
-  document.getElementById('impactPhrase').innerHTML = 
+  document.getElementById('impactPhrase').innerHTML =
     `<strong>Prompt gerado com sucesso!</strong><br>Copie e cole no Claude, GPT-4o ou Gemini.`;
 
-  // Mostra o prompt de forma clara
+  // Renderiza o prompt com botão corrigido
   document.getElementById('sections').innerHTML = `
     <div class="section">
       <div class="section-head">
@@ -83,43 +73,58 @@ Responda **APENAS** com um JSON válido, sem nenhum texto antes ou depois:
       </div>
       <div class="section-body" style="padding:0;">
         <textarea id="promptOutput" style="width:100%; min-height:320px; background:#0d0d0d; color:#e8e8e0; border:1px solid #222; padding:16px; border-radius:8px; font-family: monospace; font-size: 0.9rem; line-height:1.5; resize:vertical;">${prompt}</textarea>
-        
-        <button onclick="copiarPrompt()" style="margin:16px auto; display:block; padding:14px 28px; background:#c8f060; color:#0d0d0d; border:none; border-radius:8px; font-weight:700; font-size:0.95rem; cursor:pointer;">
+       
+        <button id="copyBtn" style="margin:16px auto; display:block; padding:14px 28px; background:#c8f060; color:#0d0d0d; border:none; border-radius:8px; font-weight:700; font-size:0.95rem; cursor:pointer;">
           📋 Copiar Prompt para o Clipboard
         </button>
       </div>
     </div>
   `;
 
+  // Adiciona o evento de clique no botão (melhor prática)
+  document.getElementById('copyBtn').addEventListener('click', copiarPrompt);
+
   btn.disabled = false;
   btn.textContent = "Gerar Diagnóstico";
 }
 
-// Função de copiar melhorada
+// Função de copiar corrigida e melhorada
 function copiarPrompt() {
   const textarea = document.getElementById("promptOutput");
-  if (!textarea) return;
+  const btn = document.getElementById("copyBtn");
+
+  if (!textarea || !btn) return;
 
   textarea.select();
-  navigator.clipboard.writeText(textarea.value).then(() => {
-    const originalText = event.target.textContent;
-    event.target.textContent = "✅ Copiado com sucesso!";
-    setTimeout(() => {
-      event.target.textContent = originalText;
-    }, 2000);
-  }).catch(() => {
-    alert("Não foi possível copiar. Selecione o texto manualmente.");
-  });
+  navigator.clipboard.writeText(textarea.value)
+    .then(() => {
+      const originalText = btn.textContent;
+      const originalBg = btn.style.background;
+
+      btn.textContent = "✅ Copiado com sucesso!";
+      btn.style.background = "#22c55e";
+
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = originalBg;
+      }, 2200);
+    })
+    .catch(() => {
+      alert("Não foi possível copiar automaticamente.\nSelecione o texto manualmente e use Ctrl+C.");
+    });
 }
 
 function resetForm() {
   document.getElementById('result').style.display = 'none';
   document.querySelector('.form-card').style.display = 'block';
+
   document.getElementById('google').value = '';
   document.getElementById('site').value = '';
   document.getElementById('instagram').value = '';
+
   ['step1','step2','step3','step4'].forEach(id => {
-    document.getElementById(id).classList.remove('visible');
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('visible');
   });
 }
 </script>

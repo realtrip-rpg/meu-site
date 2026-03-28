@@ -478,46 +478,84 @@ Para cada campo do JSON:
 - insights: liste separadamente: 3 dores latentes / 3 problemas invisíveis / 3 ganchos de abordagem (use seções com títulos em maiúsculas)`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userContent }]
-      })
-    });
+    // Monta prompt final
+const prompt = `
+Atue como especialista em crescimento de imobiliárias (aquisição, vendas e posicionamento).
 
-    const data = await response.json();
-    const raw = data.content.map(b => b.text || '').join('');
-    const clean = raw.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean);
+Fontes:
+- Google Meu Negócio: ${google || 'Não informado'}
+- Site: ${site || 'Não informado'}
+- Instagram: ${instagram || 'Não informado'}
 
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('result').style.display = 'block';
+Faça uma análise objetiva e direta, com foco em gerar insights comerciais.
 
-    document.getElementById('timestamp').textContent = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-    document.getElementById('impactPhrase').textContent = parsed.fraseImpacto || '—';
+GERE:
 
-    const sectionsEl = document.getElementById('sections');
-    sectionsEl.innerHTML = '';
+1. RESUMO DO NEGÓCIO (máx. 4 linhas)
+- Posicionamento percebido
+- Público e tipo de imóvel
 
-    SECTION_CONFIG.forEach(cfg => {
-      const val = parsed[cfg.key] || '—';
-      const div = document.createElement('div');
-      div.className = 'section';
-      div.innerHTML = `
-        <div class="section-head">
-          <div class="section-num">${cfg.num}</div>
-          <div class="section-title ${cfg.colorClass}">${cfg.title}</div>
-        </div>
-        <div class="section-body">${escapeHtml(val)}</div>
-      `;
-      sectionsEl.appendChild(div);
-    });
+2. PRINCIPAIS GARGALOS
+Liste até 5 pontos onde estão perdendo oportunidades ou leads.
 
-    btn.disabled = false;
+3. PERDAS DE DINHEIRO (parte mais importante)
+Onde estão deixando de faturar hoje (seja direto e específico).
+
+4. OPORTUNIDADES RÁPIDAS (quick wins)
+Até 5 ações simples que podem gerar resultado rápido.
+
+5. ALAVANCAS DE CRESCIMENTO
+Até 3 estratégias com maior potencial de escala.
+
+6. INSIGHTS PARA ABORDAGEM
+Liste:
+- 3 dores latentes
+- 3 problemas invisíveis
+- 3 ganchos de abordagem
+
+REGRAS:
+- Seja direto (sem textos longos)
+- Evite explicações genéricas
+- Foque em vendas e crescimento
+- Responda de forma enxuta e prática
+
+7. FRASE DE IMPACTO
+Crie uma frase direta que resuma o principal problema da empresa.
+
+Limite a resposta a no máximo 150 palavras.
+Seja extremamente conciso. Responda com o mínimo de palavras possível mantendo clareza.
+`;
+
+// Copia automaticamente
+navigator.clipboard.writeText(prompt);
+
+// UI feedback (mantém seu layout premium)
+document.getElementById('loading').style.display = 'none';
+document.getElementById('result').style.display = 'block';
+
+document.getElementById('timestamp').textContent =
+  new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+
+document.getElementById('impactPhrase').textContent =
+  "Prompt pronto. Cole no Claude para gerar o diagnóstico.";
+
+const sectionsEl = document.getElementById('sections');
+sectionsEl.innerHTML = `
+  <div class="section">
+    <div class="section-head">
+      <div class="section-num">⚡</div>
+      <div class="section-title accent">Próximo Passo</div>
+    </div>
+    <div class="section-body">
+      O prompt foi copiado automaticamente.\n\n
+      👉 Vá no Claude\n
+      👉 Cole (CTRL + V)\n
+      👉 Gere o diagnóstico completo
+    </div>
+  </div>
+`;
+
+btn.disabled = false;
   } catch (err) {
     document.getElementById('loading').style.display = 'none';
     document.querySelector('.form-card').style.display = 'block';

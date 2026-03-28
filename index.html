@@ -271,8 +271,6 @@
     text-transform: uppercase;
   }
   .section-title.accent { color: var(--accent); }
-  .section-title.danger { color: var(--danger); }
-  .section-title.gold { color: var(--gold); }
 
   .section-body {
     padding: 20px 24px;
@@ -284,7 +282,7 @@
 
   textarea#promptOutput {
     width: 100%;
-    min-height: 340px;
+    min-height: 380px;
     background: #0a0a0a;
     color: #e0e0d8;
     border: 1px solid #333;
@@ -352,7 +350,7 @@
 <main>
   <div class="hero-label">● Inteligência comercial para imobiliárias</div>
   <h1>Onde seu negócio está<br><em>perdendo dinheiro</em>?</h1>
-  <p class="sub">Informe suas fontes digitais e receba um prompt pronto para colar no Claude, GPT-4o ou Gemini.</p>
+  <p class="sub">Informe suas fontes digitais e receba um prompt otimizado para colar no Claude, GPT-4o ou Gemini.</p>
 
   <div class="form-card">
     <div class="form-grid">
@@ -397,7 +395,7 @@
 
     <div class="impact-banner">
       <div class="impact-label">⚡ Status</div>
-      <div class="impact-text" id="impactPhrase">Prompt gerado com sucesso! Copie e cole no Claude ou GPT.</div>
+      <div class="impact-text" id="impactPhrase">Prompt gerado com sucesso! Copie e cole no Claude ou GPT-4o.</div>
     </div>
 
     <div id="sections"></div>
@@ -427,37 +425,51 @@ async function generateDiagnostic() {
   document.getElementById('result').style.display = 'none';
   document.querySelector('.form-card').style.display = 'none';
 
-  // Animação suave dos passos
+  // Animação dos passos
   const steps = ['step1','step2','step3','step4'];
   for (let i = 0; i < steps.length; i++) {
     await new Promise(r => setTimeout(r, 650));
     document.getElementById(steps[i]).classList.add('visible');
   }
 
-  const prompt = `Atue como especialista em crescimento de imobiliárias (aquisição, vendas e posicionamento digital).
+  // === NOVO PROMPT (exatamente como você pediu) ===
+  const prompt = `Atue como especialista em crescimento de imobiliárias (aquisição, vendas e posicionamento).
 
-Analise as seguintes fontes e gere um diagnóstico comercial direto e acionável:
+Fontes:
+- Google Meu Negócio: ${google || 'Não informado'}
+- Site: ${site || 'Não informado'}
+- Instagram: ${instagram || 'Não informado'}
 
-Google Meu Negócio: ${google || 'Não informado'}
-Site: ${site || 'Não informado'}
-Instagram: ${instagram || 'Não informado'}
+Faça uma análise objetiva e direta, com foco em gerar insights comerciais.
 
-REGRAS IMPORTANTES:
-- Seja extremamente direto e objetivo
-- Foque em vendas, captação e conversão
-- Evite respostas genéricas
-- Use linguagem de consultor experiente
+GERE:
 
-Responda **APENAS** com um JSON válido, sem nenhum texto antes ou depois:
-{
-  "fraseImpacto": "Uma frase poderosa de no máximo 1 linha resumindo o principal problema/oportunidade",
-  "resumo": "Resumo do posicionamento percebido, público-alvo e tipo de imóvel (máx 4 linhas)",
-  "gargalos": "• ponto 1\n• ponto 2\n• ponto 3 (máx 5)",
-  "perdas": "• onde estão perdendo dinheiro hoje (seja bem específico)",
-  "quickwins": "• ação rápida 1\n• ação rápida 2 (máx 5)",
-  "alavancas": "• estratégia de escala 1\n• estratégia de escala 2 (máx 3)",
-  "insights": "DORES LATENTES:\n• ...\n\nPROBLEMAS INVISÍVEIS:\n• ...\n\nGANCHOS DE ABORDAGEM:\n• ..."
-}`;
+1. RESUMO DO NEGÓCIO (máx. 4 linhas)
+- Posicionamento percebido
+- Público e tipo de imóvel
+
+2. PRINCIPAIS GARGALOS
+Liste até 5 pontos onde estão perdendo oportunidades ou leads.
+
+3. PERDAS DE DINHEIRO (parte mais importante)
+Onde estão deixando de faturar hoje.
+
+4. OPORTUNIDADES RÁPIDAS
+Até 5 ações simples.
+
+5. ALAVANCAS DE CRESCIMENTO
+Até 3 estratégias.
+
+6. INSIGHTS PARA ABORDAGEM
+- 3 dores
+- 3 problemas
+- 3 ganchos
+
+7. FRASE DE IMPACTO
+Resuma o principal problema.
+
+Limite a resposta a 150 palavras.
+Seja extremamente conciso. Responda com o mínimo de palavras possível mantendo clareza.`;
 
   // Mostra resultado
   document.getElementById('loading').style.display = 'none';

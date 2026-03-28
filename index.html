@@ -1,407 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diagnóstico Imobiliária</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0d0d0d;
-    --surface: #141414;
-    --border: #222;
-    --accent: #c8f060;
-    --accent-dim: rgba(200,240,96,0.12);
-    --text: #e8e8e0;
-    --muted: #666;
-    --danger: #ff5a5a;
-    --gold: #f5c842;
-  }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    line-height: 1.6;
-  }
-
-  /* HEADER */
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 28px 40px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .logo-mark {
-    width: 36px; height: 36px;
-    background: var(--accent);
-    clip-path: polygon(0 100%, 50% 0, 100% 100%);
-    flex-shrink: 0;
-  }
-  .logo-text {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.1rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-  .logo-text span { color: var(--accent); }
-  .badge {
-    margin-left: auto;
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    padding: 4px 10px;
-    border-radius: 20px;
-  }
-
-  /* MAIN */
-  main { max-width: 780px; margin: 0 auto; padding: 60px 24px 100px; }
-
-  .hero-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 16px;
-  }
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 16px;
-    letter-spacing: -0.02em;
-  }
-  h1 em {
-    font-style: normal;
-    color: var(--accent);
-    position: relative;
-  }
-  .sub {
-    color: var(--muted);
-    font-size: 0.95rem;
-    max-width: 500px;
-    margin-bottom: 48px;
-    line-height: 1.7;
-  }
-
-  /* FORM */
-  .form-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 36px;
-    margin-bottom: 32px;
-  }
-  .form-grid { display: grid; gap: 20px; }
-  .field { display: flex; flex-direction: column; gap: 8px; }
-  label {
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  label svg { flex-shrink: 0; }
-  input[type="text"] {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 300;
-    padding: 14px 16px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    width: 100%;
-  }
-  input[type="text"]::placeholder { color: #3a3a3a; }
-  input[type="text"]:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(200,240,96,0.08);
-  }
-
-  .btn {
-    width: 100%;
-    background: var(--accent);
-    color: #0d0d0d;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Syne', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 16px 24px;
-    cursor: pointer;
-    margin-top: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: opacity 0.2s, transform 0.15s;
-  }
-  .btn:hover { opacity: 0.88; transform: translateY(-1px); }
-  .btn:active { transform: translateY(0); }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  /* LOADING */
-  #loading {
-    display: none;
-    text-align: center;
-    padding: 48px 24px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--surface);
-    margin-bottom: 32px;
-  }
-  .spinner {
-    width: 36px; height: 36px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 20px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text {
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .loading-steps { margin-top: 12px; min-height: 20px; }
-  .loading-step {
-    font-size: 0.78rem;
-    color: var(--accent);
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-  .loading-step.visible { opacity: 1; }
-
-  /* RESULT */
-  #result { display: none; animation: fadeUp 0.5s ease; }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .result-header {
-    border: 1px solid var(--border);
-    border-radius: 12px 12px 0 0;
-    border-bottom: none;
-    background: var(--surface);
-    padding: 24px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .result-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .timestamp {
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
-
-  /* IMPACTO */
-  .impact-banner {
-    background: linear-gradient(135deg, #1a1f0a 0%, #0f1a06 100%);
-    border: 1px solid rgba(200,240,96,0.3);
-    border-top: 3px solid var(--accent);
-    padding: 28px 32px;
-    border-radius: 0 0 12px 12px;
-    margin-bottom: 24px;
-  }
-  .impact-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 12px;
-  }
-  .impact-text {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1rem, 2.5vw, 1.3rem);
-    font-weight: 700;
-    line-height: 1.4;
-    color: var(--text);
-  }
-
-  /* SECTIONS */
-  .sections { display: grid; gap: 16px; }
-  .section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .section-head {
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .section-num {
-    width: 22px; height: 22px;
-    background: var(--accent-dim);
-    border: 1px solid rgba(200,240,96,0.2);
-    border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--accent);
-    flex-shrink: 0;
-  }
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .section-title.danger { color: var(--danger); }
-  .section-title.gold { color: var(--gold); }
-  .section-title.accent { color: var(--accent); }
-  .section-body {
-    padding: 20px 24px;
-    font-size: 0.9rem;
-    line-height: 1.75;
-    color: #c0c0b8;
-    white-space: pre-wrap;
-  }
-  .section-body strong { color: var(--text); font-weight: 500; }
-
-  .reset-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.8rem;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-top: 24px;
-    transition: border-color 0.2s, color 0.2s;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* ERROR */
-  .error-box {
-    background: rgba(255,90,90,0.07);
-    border: 1px solid rgba(255,90,90,0.3);
-    border-radius: 10px;
-    padding: 20px 24px;
-    color: var(--danger);
-    font-size: 0.88rem;
-    margin-bottom: 16px;
-    display: none;
-  }
-
-  @media (max-width: 600px) {
-    header { padding: 20px; }
-    .form-card { padding: 24px 20px; }
-    .impact-banner, .section-body, .section-head { padding-left: 20px; padding-right: 20px; }
-  }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo-mark"></div>
-  <div class="logo-text">Imob<span>AI</span></div>
-  <span class="badge">Diagnóstico Beta</span>
-</header>
-
-<main>
-  <div class="hero-label">● Inteligência comercial para imobiliárias</div>
-  <h1>Onde seu negócio está<br><em>perdendo dinheiro</em>?</h1>
-  <p class="sub">Informe suas fontes digitais e receba um diagnóstico direto ao ponto — sem enrolação, com foco em vendas e crescimento.</p>
-
-  <div class="form-card">
-    <div class="form-grid">
-      <div class="field">
-        <label>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8f060" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-          Google Meu Negócio
-        </label>
-        <input type="text" id="google" placeholder="https://maps.app.goo.gl/... ou nome do perfil" />
-      </div>
-      <div class="field">
-        <label>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8f060" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-          Site
-        </label>
-        <input type="text" id="site" placeholder="https://suaimobiliaria.com.br" />
-      </div>
-      <div class="field">
-        <label>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8f060" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-          Instagram
-        </label>
-        <input type="text" id="instagram" placeholder="@suaimobiliaria ou link do perfil" />
-      </div>
-      <div class="error-box" id="errorBox">Por favor, preencha ao menos um campo antes de gerar o diagnóstico.</div>
-      <button class="btn" id="generateBtn" onclick="generateDiagnostic()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        Gerar Diagnóstico
-      </button>
-    </div>
-  </div>
-
-  <div id="loading">
-    <div class="spinner"></div>
-    <div class="loading-text">Analisando seu negócio</div>
-    <div class="loading-steps">
-      <div class="loading-step" id="step1">→ Mapeando presença digital...</div>
-      <div class="loading-step" id="step2">→ Identificando gargalos comerciais...</div>
-      <div class="loading-step" id="step3">→ Calculando perdas de receita...</div>
-      <div class="loading-step" id="step4">→ Estruturando diagnóstico final...</div>
-    </div>
-  </div>
-
-  <div id="result">
-    <div class="result-header">
-      <div class="result-title">Diagnóstico Gerado</div>
-      <div class="timestamp" id="timestamp"></div>
-    </div>
-    <div class="impact-banner">
-      <div class="impact-label">⚡ Frase de Impacto</div>
-      <div class="impact-text" id="impactPhrase"></div>
-    </div>
-
-    <div class="sections" id="sections"></div>
-    <button class="reset-btn" onclick="resetForm()">← Novo Diagnóstico</button>
-  </div>
-</main>
-
 <script>
 const SECTION_CONFIG = [
   { key: "resumo", num: "01", title: "Resumo do Negócio", colorClass: "" },
@@ -422,167 +18,98 @@ async function generateDiagnostic() {
     errorBox.style.display = 'block';
     return;
   }
+
   errorBox.style.display = 'none';
 
   const btn = document.getElementById('generateBtn');
   btn.disabled = true;
+  btn.textContent = "Gerando Prompt...";
 
+  // Mostra loading
   document.getElementById('loading').style.display = 'block';
   document.getElementById('result').style.display = 'none';
   document.querySelector('.form-card').style.display = 'none';
 
-  // Loading steps animation
+  // Animação dos passos
   const steps = ['step1','step2','step3','step4'];
   for (let i = 0; i < steps.length; i++) {
-    await new Promise(r => setTimeout(r, 800 + i * 600));
+    await new Promise(r => setTimeout(r, 700));
     document.getElementById(steps[i]).classList.add('visible');
   }
 
-  const userContent = `
+  // === CRIA O PROMPT (versão melhorada e limpa) ===
+  const prompt = `Atue como especialista em crescimento de imobiliárias (aquisição, vendas e posicionamento digital).
+
+Analise as seguintes fontes da imobiliária e gere um diagnóstico comercial direto e acionável:
+
 Google Meu Negócio: ${google || 'Não informado'}
 Site: ${site || 'Não informado'}
 Instagram: ${instagram || 'Não informado'}
 
-Faça uma análise objetiva e direta, com foco em gerar insights comerciais.
+REGRAS IMPORTANTES:
+- Seja extremamente direto e objetivo
+- Foque em vendas, captação e conversão
+- Evite respostas genéricas
+- Use linguagem de consultor experiente
 
-GERE o diagnóstico EXATAMENTE neste formato JSON (sem markdown, sem texto extra):
+Responda **APENAS** com um JSON válido, sem nenhum texto antes ou depois:
+
 {
-  "fraseImpacto": "frase direta de diagnóstico de consultor",
-  "resumo": "texto do resumo do negócio",
-  "gargalos": "lista dos gargalos",
-  "perdas": "onde estão perdendo faturamento",
-  "quickwins": "ações rápidas",
-  "alavancas": "estratégias de crescimento",
-  "insights": "dores latentes, problemas invisíveis e ganchos de abordagem"
-}
-`.trim();
+  "fraseImpacto": "Uma frase poderosa de no máximo 1 linha resumindo o principal problema/oportunidade",
+  "resumo": "Resumo do posicionamento percebido, público-alvo e tipo de imóvel (máx 4 linhas)",
+  "gargalos": "• ponto 1\n• ponto 2\n• ponto 3 (máx 5)",
+  "perdas": "• onde estão perdendo dinheiro hoje (seja bem específico)",
+  "quickwins": "• ação rápida 1\n• ação rápida 2 (máx 5)",
+  "alavancas": "• estratégia de escala 1\n• estratégia de escala 2 (máx 3)",
+  "insights": "DORES LATENTES:\n• ...\n\nPROBLEMAS INVISÍVEIS:\n• ...\n\nGANCHOS DE ABORDAGEM:\n• ..."
+}`;
 
-  const systemPrompt = `Atue como especialista em crescimento de imobiliárias (aquisição, vendas e posicionamento).
-Receberá até 3 fontes digitais de uma imobiliária: Google Meu Negócio, Site e Instagram.
-Faça uma análise objetiva e direta, com foco em gerar insights comerciais.
+  // Mostra o resultado
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
 
-REGRAS:
-- Seja direto (sem textos longos)
-- Evite explicações genéricas
-- Foque em vendas e crescimento
-- Responda APENAS com JSON válido, sem markdown, sem texto antes ou depois
-- Se alguma fonte não foi informada, analise com base nas informações disponíveis e sinalize que está faltando
+  document.getElementById('timestamp').textContent = 
+    new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 
-Para cada campo do JSON:
-- fraseImpacto: 1 frase poderosa que resume o principal problema (estilo diagnóstico de consultor)
-- resumo: posicionamento percebido, público e tipo de imóvel (máx. 4 linhas)
-- gargalos: até 5 pontos onde estão perdendo oportunidades ou leads (use bullets com •)
-- perdas: onde estão deixando de faturar hoje — seja direto e específico (use bullets com •)
-- quickwins: até 5 ações simples que podem gerar resultado rápido (use bullets com •)
-- alavancas: até 3 estratégias com maior potencial de escala (use bullets com •)
-- insights: liste separadamente: 3 dores latentes / 3 problemas invisíveis / 3 ganchos de abordagem (use seções com títulos em maiúsculas)`;
+  document.getElementById('impactPhrase').innerHTML = 
+    `<strong>Prompt gerado com sucesso!</strong><br>Copie e cole no Claude, GPT-4o ou Gemini.`;
 
-  try {
-    // Monta prompt final
-const prompt = `
-Atue como especialista em crescimento de imobiliárias (aquisição, vendas e posicionamento).
-
-Fontes:
-- Google Meu Negócio: ${google || 'Não informado'}
-- Site: ${site || 'Não informado'}
-- Instagram: ${instagram || 'Não informado'}
-
-Faça uma análise objetiva e direta, com foco em gerar insights comerciais.
-
-GERE:
-
-1. RESUMO DO NEGÓCIO (máx. 4 linhas)
-- Posicionamento percebido
-- Público e tipo de imóvel
-
-2. PRINCIPAIS GARGALOS
-Liste até 5 pontos onde estão perdendo oportunidades ou leads.
-
-3. PERDAS DE DINHEIRO (parte mais importante)
-Onde estão deixando de faturar hoje (seja direto e específico).
-
-4. OPORTUNIDADES RÁPIDAS (quick wins)
-Até 5 ações simples que podem gerar resultado rápido.
-
-5. ALAVANCAS DE CRESCIMENTO
-Até 3 estratégias com maior potencial de escala.
-
-6. INSIGHTS PARA ABORDAGEM
-Liste:
-- 3 dores latentes
-- 3 problemas invisíveis
-- 3 ganchos de abordagem
-
-REGRAS:
-- Seja direto (sem textos longos)
-- Evite explicações genéricas
-- Foque em vendas e crescimento
-- Responda de forma enxuta e prática
-
-7. FRASE DE IMPACTO
-Crie uma frase direta que resuma o principal problema da empresa.
-
-Limite a resposta a no máximo 150 palavras.
-Seja extremamente conciso. Responda com o mínimo de palavras possível mantendo clareza.
-`;
-
-// Mostra o prompt na tela
-document.getElementById('sections').innerHTML = `
-  <div class="section">
-    <div class="section-head">
-      <div class="section-num">📋</div>
-      <div class="section-title accent">Seu Prompt</div>
+  // Mostra o prompt de forma clara
+  document.getElementById('sections').innerHTML = `
+    <div class="section">
+      <div class="section-head">
+        <div class="section-num">📋</div>
+        <div class="section-title accent">Seu Prompt Pronto</div>
+      </div>
+      <div class="section-body" style="padding:0;">
+        <textarea id="promptOutput" style="width:100%; min-height:320px; background:#0d0d0d; color:#e8e8e0; border:1px solid #222; padding:16px; border-radius:8px; font-family: monospace; font-size: 0.9rem; line-height:1.5; resize:vertical;">${prompt}</textarea>
+        
+        <button onclick="copiarPrompt()" style="margin:16px auto; display:block; padding:14px 28px; background:#c8f060; color:#0d0d0d; border:none; border-radius:8px; font-weight:700; font-size:0.95rem; cursor:pointer;">
+          📋 Copiar Prompt para o Clipboard
+        </button>
+      </div>
     </div>
-    <div class="section-body">
-      <textarea id="promptOutput" style="width:100%;height:200px;background:#0d0d0d;color:#e8e8e0;border:1px solid #222;padding:12px;border-radius:8px;">
-${prompt}
-      </textarea>
+  `;
 
-      <button onclick="copiarPrompt()" style="margin-top:12px;padding:10px 16px;background:#c8f060;border:none;border-radius:6px;font-weight:bold;cursor:pointer;">
-        Copiar Prompt
-      </button>
-    </div>
-  </div>
-`;
-
-// UI feedback (mantém seu layout premium)
-document.getElementById('loading').style.display = 'none';
-document.getElementById('result').style.display = 'block';
-
-document.getElementById('timestamp').textContent =
-  new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-
-document.getElementById('impactPhrase').textContent =
-  "Prompt pronto. Cole no Claude para gerar o diagnóstico.";
-
-const sectionsEl = document.getElementById('sections');
-sectionsEl.innerHTML = `
-  <div class="section">
-    <div class="section-head">
-      <div class="section-num">⚡</div>
-      <div class="section-title accent">Próximo Passo</div>
-    </div>
-    <div class="section-body">
-      O prompt foi copiado automaticamente.\n\n
-      👉 Vá no Claude\n
-      👉 Cole (CTRL + V)\n
-      👉 Gere o diagnóstico completo
-    </div>
-  </div>
-`;
-
-btn.disabled = false;
-  } catch (err) {
-    document.getElementById('loading').style.display = 'none';
-    document.querySelector('.form-card').style.display = 'block';
-    document.getElementById('errorBox').textContent = 'Erro ao gerar o diagnóstico. Verifique sua conexão e tente novamente.';
-    document.getElementById('errorBox').style.display = 'block';
-    btn.disabled = false;
-  }
+  btn.disabled = false;
+  btn.textContent = "Gerar Diagnóstico";
 }
 
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// Função de copiar melhorada
+function copiarPrompt() {
+  const textarea = document.getElementById("promptOutput");
+  if (!textarea) return;
+
+  textarea.select();
+  navigator.clipboard.writeText(textarea.value).then(() => {
+    const originalText = event.target.textContent;
+    event.target.textContent = "✅ Copiado com sucesso!";
+    setTimeout(() => {
+      event.target.textContent = originalText;
+    }, 2000);
+  }).catch(() => {
+    alert("Não foi possível copiar. Selecione o texto manualmente.");
+  });
 }
 
 function resetForm() {
@@ -591,15 +118,8 @@ function resetForm() {
   document.getElementById('google').value = '';
   document.getElementById('site').value = '';
   document.getElementById('instagram').value = '';
-  // reset loading steps
-  ['step1','step2','step3','step4'].forEach(id => document.getElementById(id).classList.remove('visible'));
-}
- function copiarPrompt() {
-  const texto = document.getElementById("promptOutput");
-  texto.select();
-  document.execCommand("copy");
-  alert("Prompt copiado!");
+  ['step1','step2','step3','step4'].forEach(id => {
+    document.getElementById(id).classList.remove('visible');
+  });
 }
 </script>
-</body>
-</html>

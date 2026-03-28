@@ -526,8 +526,24 @@ Limite a resposta a no máximo 150 palavras.
 Seja extremamente conciso. Responda com o mínimo de palavras possível mantendo clareza.
 `;
 
-// Copia automaticamente
-navigator.clipboard.writeText(prompt);
+// Mostra o prompt na tela
+document.getElementById('sections').innerHTML = `
+  <div class="section">
+    <div class="section-head">
+      <div class="section-num">📋</div>
+      <div class="section-title accent">Seu Prompt</div>
+    </div>
+    <div class="section-body">
+      <textarea id="promptOutput" style="width:100%;height:200px;background:#0d0d0d;color:#e8e8e0;border:1px solid #222;padding:12px;border-radius:8px;">
+${prompt}
+      </textarea>
+
+      <button onclick="copiarPrompt()" style="margin-top:12px;padding:10px 16px;background:#c8f060;border:none;border-radius:6px;font-weight:bold;cursor:pointer;">
+        Copiar Prompt
+      </button>
+    </div>
+  </div>
+`;
 
 // UI feedback (mantém seu layout premium)
 document.getElementById('loading').style.display = 'none';
@@ -577,6 +593,12 @@ function resetForm() {
   document.getElementById('instagram').value = '';
   // reset loading steps
   ['step1','step2','step3','step4'].forEach(id => document.getElementById(id).classList.remove('visible'));
+}
+ function copiarPrompt() {
+  const texto = document.getElementById("promptOutput");
+  texto.select();
+  document.execCommand("copy");
+  alert("Prompt copiado!");
 }
 </script>
 </body>
